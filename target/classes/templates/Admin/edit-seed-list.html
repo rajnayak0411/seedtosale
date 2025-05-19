@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+<body>
+    <div th:replace="fragments/adminnav :: adminnav"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+            <main class="col-lg-10">
+                <div class="container mt-3">
+                    <h4 class="mb-2">Edit Seeds</h4>
+                    <div th:if="${message}" class="alert alert-info" role="alert" th:text="${message}"></div>
+                    <table class="table edit-context table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sr. No.</th>
+                                <th>Seed Name</th>
+                                <th>Type</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="seed : ${seeds}">
+                                <td th:text="${seedStat.count}">1</td>
+                                <td th:text="${seed.name}">Seed Name</td>
+                                <td th:text="${seed.type}">Type</td>
+                                <td th:text="${seed.location}">Location</td>
+                                <td>₹<span th:text="${seed.price}">Price</span></td>
+                                <td>
+                                    <img th:src="@{'/uploads/seeds/' + ${seed.image}}" alt="Seed Image" style="width:100px; height:80px; object-fit:cover; border-radius:5px;" />
+                                </td>
+                                <td>
+                                    <a th:href="@{'/admin/edit-seed/' + ${seed.id}}" class="btn btn-primary btn-sm">Edit</a>
+                                    <a th:href="@{'/admin/delete-seed/' + ${seed.id}}" class="btn btn-primary btn-sm ms-2">Delete</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+</body>
+</html>

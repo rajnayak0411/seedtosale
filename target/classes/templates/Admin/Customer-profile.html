@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+    <div th:replace="fragments/adminnav :: adminnav"></div>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 ms-sm-auto p-4">
+                <h4>Customer Details</h4>
+
+                <!-- Customer Card -->
+                <div class="card mb-4">
+                <div class="card-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <p><strong style="width: 120px;display: inline-block;">Name:</strong> <span th:text="${buyer.name}">Name</span></p>
+                        <p><strong style="width: 120px;display: inline-block;">Mobile No:</strong> <span th:text="${buyer.phone}">Mobile No.</span></p>
+                        <p><strong style="width: 120px;display: inline-block;">Email Id:</strong> <span th:text="${buyer.email}">Mobile No.</span></p>
+                        <p><strong style="width: 120px;display: inline-block;">Address:</strong> <span th:text="${buyer.address}">Address</span></p>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Purchase List -->
+                <h5>Purches Item List:</h5>
+                <div class="row mb-3">
+                    <div class="col-md-3">
+                        <label for="filterItemType" class="form-label">Filter by Item Type:</label>
+                        <select id="filterItemType" class="form-select">
+                            <option value="">All</option>
+                            <option value="seed">Seed</option>
+                            <option value="tractor">Tractor</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filterStatus" class="form-label">Filter by Status:</label>
+                        <select id="filterStatus" class="form-select">
+                            <option value="">All</option>
+                            <option value="Payment Done">Payment Done</option>
+                            <option value="Payment Failed">Payment Failed</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
+                    </div>
+                </div>
+                <div id="ordersCards" class="row">
+                    <div class="col-md-6 mb-3" th:each="order, iterStat : ${orders}" th:attr="data-item-type=${order.itemType.toLowerCase()}, data-status=${order.status == 'SOLD' ? 'payment done' : 'payment failed'}">
+                        <div class="card p-3 h-100">
+                            <div class="row align-items-center">
+                                <div class="col-7">
+                                    <h5 class="card-title" th:text="${order.productName}">Product Name</h5>
+                                    <p><strong>Category:</strong> <span th:text="${order.itemType}">Category</span></p>
+                                    <p><strong>Transaction Id:</strong> <span th:text="${order.razorpayPaymentId}">Transaction Id</span></p>
+                                    <p><strong>Status:</strong> <span th:text="${order.status == 'SOLD' ? 'Payment Done' : 'Payment Failed'}">Status</span></p>
+                                    <p><strong>Address:</strong> <span th:text="${order.location}">Location</span></p>
+                                    <p><strong>Quantity (H/Kg):</strong> <span th:text="${order.quantity}">Quantity</span></p>
+                                    <p><strong>Price:</strong> ₹<span th:text="${order.price}">Price</span></p>
+                                    <p><strong>Total Price:</strong> ₹<span th:text="${order.totalPrice != null ? order.totalPrice : order.price}">Total Price</span></p>
+                                </div>
+                                <div class="col-5">
+                                    <p><strong>Order Date:</strong> <span th:text="${order.orderDate}">Order Date</span></p>
+                                    <p><strong>Order Time:</strong> <span th:text="${order.orderTime}">Order Time</span></p>
+                                    <p><strong>Delivery Date:</strong> <span class="delivery-date" th:attr="data-order-date=${order.orderDateIso}">Calculating...</span></p>
+                                    <img th:if="${order.productImage != null}" th:src="@{${order.productImage}}" alt="Product Image" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const filterItemType = document.getElementById('filterItemType');
+            const filterStatus = document.getElementById('filterStatus');
+            const ordersCards = document.getElementById('ordersCards');
+            const orderCards = ordersCards.getElementsByClassName('col-md-6');
+
+            function filterCards() {
+                const itemTypeValue = filterItemType.value.toLowerCase();
+                const statusValue = filterStatus.value.toLowerCase();
+
+                for (let i = 0; i < orderCards.length; i++) {
+                    const card = orderCards[i];
+                    const itemType = card.getAttribute('data-item-type');
+                    const status = card.getAttribute('data-status');
+
+                    const itemTypeMatch = itemTypeValue === '' || itemType === itemTypeValue;
+                    const statusMatch = statusValue === '' || status === statusValue;
+
+                    if (itemTypeMatch && statusMatch) {
+                        card.style.display = '';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            }
+
+            filterItemType.addEventListener('change', filterCards);
+            filterStatus.addEventListener('change', filterCards);
+
+            const resetButton = document.getElementById('resetFilters');
+            resetButton.addEventListener('click', function () {
+                filterItemType.value = '';
+                filterStatus.value = '';
+                filterCards();
+            });
+
+            // Calculate delivery date as 15 days after order date
+            function calculateDeliveryDates() {
+                const deliveryDateElements = document.querySelectorAll('.delivery-date');
+                deliveryDateElements.forEach(function (el) {
+                    const orderDateStr = el.getAttribute('data-order-date');
+                    if (orderDateStr) {
+                        // Parse date string as yyyy-MM-dd
+                        const parts = orderDateStr.split('-');
+                        if (parts.length === 3) {
+                            const year = parseInt(parts[0], 10);
+                            const month = parseInt(parts[1], 10) - 1; // Month is zero-based
+                            const day = parseInt(parts[2], 10);
+                            const orderDate = new Date(year, month, day);
+                            if (!isNaN(orderDate)) {
+                                orderDate.setDate(orderDate.getDate() + 15);
+                                const options = { year: 'numeric', month: 'numeric', day: 'numeric' };
+                                el.textContent = orderDate.toLocaleDateString(undefined, options);
+                            } else {
+                                el.textContent = 'Invalid order date';
+                            }
+                        } else {
+                            el.textContent = 'Invalid order date format';
+                        }
+                    } else {
+                        el.textContent = 'No order date';
+                    }
+                });
+            }
+            calculateDeliveryDates();
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/adminstyle.css">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+  <div th:replace="fragments/adminnav :: adminnav"></div>
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Sidebar with Animation -->
+      <nav th:replace="fragments/adminsidebar :: adminsidebar" class="animate__animated animate__fadeInLeft"></nav>
+
+      <!-- Main Content without Animation -->
+      <div class="col-lg-9">
+        <div class="container mt-3">
+          <h2 class="mb-4">Edit Tractor Details</h2>
+          <div class="form-section">
+            <div class="image-preview">
+              <h5>Image Preview</h5>
+              <div id="file-name" class="file-name"></div>
+              <img th:if="${tractor.image != null}" th:src="@{'/uploads/tractors/' + ${tractor.image}}" alt="Current Image" style="width:350px; height:250px;"/>
+            </div>
+            <div class="w-50">
+              <div th:if="${message}" class="alert alert-info" role="alert" th:text="${message}"></div>
+              <form enctype="multipart/form-data" method="post" th:action="@{'/admin/edit-tractor/' + ${tractor.id}}">
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Tractor Name" name="name" th:value="${tractor.name}" required>
+                </div>
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Enter Description" maxlength="100" name="description" th:value="${tractor.description}" required>
+                </div>
+                <div class="mb-3">
+                  <select class="form-select" id="location" name="location" required>
+                    <option value="" disabled>Select Location</option>
+                    <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}" th:selected="${loc.equals(tractor.location)}"></option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Price/hr" name="price" min="0" th:value="${tractor.price}" required>
+                </div>
+                <!-- Removed number input as it does not exist in Tractor model -->
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Stock Quantity" name="stockQuantity" min="0" th:value="${tractor.stockQuantity}" required>
+                </div>
+                <div class="mb-3">
+                  <input type="number" hidden class="form-control" placeholder="Sold Quantity" name="soldQuantity" min="0" th:value="${tractor.soldQuantity}" required>
+                </div>
+                <div class="mb-3 mx-2 d-flex">
+                  <label for="upload-photo" class="form-label col-lg-4 mt-2">Upload New Photo</label>
+                  <input type="file" id="upload-photo" name="photo" class="form-control bg-info" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Update Tractor</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+
+    <script>
+      document.getElementById("upload-photo").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const imagePreviewContainer = document.querySelector(".image-preview");
+            // Remove existing preview image if any
+            const existingImage = imagePreviewContainer.querySelector("img");
+            if (existingImage) {
+              existingImage.remove();
+            }
+            // Create new image element for preview
+            const imagePreview = document.createElement("img");
+            imagePreview.src = e.target.result;
+            imagePreview.style.width = '350px';
+            imagePreview.style.height = '250px';
+            imagePreviewContainer.appendChild(imagePreview);
+          };
+          reader.readAsDataURL(file);
+          document.getElementById("file-name").textContent = file.name;
+        }
+      });
+    </script>
+</body>
+
+</html>

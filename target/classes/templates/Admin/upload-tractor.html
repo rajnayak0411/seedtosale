@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<link rel="stylesheet" href="/css/adminstyle.css">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+  <div th:replace="fragments/adminnav :: adminnav"></div>
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Sidebar with Animation -->
+      <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+
+      <!-- Main Content without Animation -->
+      <div class="col-lg-9">
+        <div class="container mt-3">
+          <h4 class="mb-2">Fill Tractor Details</h4>
+          <div class="form-section">
+            <div class="image-preview">
+              <h5>Image Preview</h5>
+              <div id="file-name" class="file-name"></div>
+            </div>
+            <div class="w-50">
+              <div th:if="${message}" class="alert alert-info" role="alert" th:text="${message}"></div>
+              <form enctype="multipart/form-data" method="post" action="/admin/upload-tractor">
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Tractor Name" name="name" required>
+                </div>
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Enter Description" maxlength="100" name="description" required>
+                </div>
+                <div class="mb-3">
+                  <select class="form-select" id="location" name="location" required>
+                    <option value="" disabled selected>Select Location</option>
+                    <option value="Andhra Pradesh">Andhra Pradesh</option>
+                    <option value="Arunachal Pradesh">Arunachal Pradesh</option>
+                    <option value="Assam">Assam</option>
+                    <option value="Bihar">Bihar</option>
+                    <option value="Chhattisgarh">Chhattisgarh</option>
+                    <option value="Goa">Goa</option>
+                    <option value="Gujarat">Gujarat</option>
+                    <option value="Haryana">Haryana</option>
+                    <option value="Himachal Pradesh">Himachal Pradesh</option>
+                    <option value="Jharkhand">Jharkhand</option>
+                    <option value="Karnataka">Karnataka</option>
+                    <option value="Kerala">Kerala</option>
+                    <option value="Madhya Pradesh">Madhya Pradesh</option>
+                    <option value="Maharashtra">Maharashtra</option>
+                    <option value="Manipur">Manipur</option>
+                    <option value="Meghalaya">Meghalaya</option>
+                    <option value="Mizoram">Mizoram</option>
+                    <option value="Nagaland">Nagaland</option>
+                    <option value="Odisha">Odisha</option>
+                    <option value="Punjab">Punjab</option>
+                    <option value="Rajasthan">Rajasthan</option>
+                    <option value="Sikkim">Sikkim</option>
+                    <option value="Tamil Nadu">Tamil Nadu</option>
+                    <option value="Telangana">Telangana</option>
+                    <option value="Tripura">Tripura</option>
+                    <option value="Uttar Pradesh">Uttar Pradesh</option>
+                    <option value="Uttarakhand">Uttarakhand</option>
+                    <option value="West Bengal">West Bengal</option>
+                    <option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option>
+                    <option value="Chandigarh">Chandigarh</option>
+                    <option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu
+                    </option>
+                    <option value="Delhi">Delhi</option>
+                    <option value="Jammu and Kashmir">Jammu and Kashmir</option>
+                    <option value="Ladakh">Ladakh</option>
+                    <option value="Lakshadweep">Lakshadweep</option>
+                    <option value="Puducherry">Puducherry</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Price/hr" name="price" min="0" required>
+                </div>
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Stock Quantity" name="stockQuantity" min="0" required>
+                </div>
+                <div class="mb-3 mx-2 d-flex">
+                  <label for="upload-photo" class="form-label col-lg-3 mt-2">Upload Photo</label>
+                  <input type="file" id="upload-photo" name="photo" class="form-control" accept="image/*" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Upload Tractor</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+
+    <script>
+      document.getElementById("upload-photo").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const imagePreviewContainer = document.querySelector(".image-preview");
+            // Remove existing preview image if any
+            const existingImage = imagePreviewContainer.querySelector("img");
+            if (existingImage) {
+              existingImage.remove();
+            }
+            // Create new image element for preview
+            const imagePreview = document.createElement("img");
+            imagePreview.src = e.target.result;
+            imagePreview.style.width = '350px';
+            imagePreview.style.height = '250px';
+            imagePreviewContainer.appendChild(imagePreview);
+          };
+          reader.readAsDataURL(file);
+          document.getElementById("file-name").textContent = file.name;
+        }
+      });
+    </script>
+</body>
+
+</html>

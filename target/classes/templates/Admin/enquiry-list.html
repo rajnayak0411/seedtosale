@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+    <div th:replace="fragments/adminnav :: adminnav"></div>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 col-lg-10 p-2">
+               <h4>Enquiry List</h4>
+                <div th:if="${enquiries != null and !enquiries.isEmpty()}">
+                    <table class="table table-striped table-bordered enquiry-table">
+                        <thead class="">
+                            <tr>
+                                <th>ID</th>
+                                <th>Name</th>
+                                <th style="width: fit-content;">Email</th>
+                                <th>Subject</th>
+                                <th>Message</th>
+                                <th>Submitted At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="enquiry : ${enquiries}">
+                                <td th:text="${enquiry.id}">1</td>
+                                <td th:text="${enquiry.name}">John Doe</td>
+                                <td class="email" th:text="${enquiry.email}">john@example.com</td>
+                                <td th:text="${enquiry.subject}">Subject</td>
+                                <td th:text="${enquiry.message}">Message content</td>
+                                <td th:text="${enquiry.submittedAt != null ? #temporals.format(enquiry.submittedAt, 'dd-MM-yyyy HH:mm') : 'N/A'}">
+                                    01-01-2024 12:00
+                                </td>
+                               
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div th:if="${enquiries == null or enquiries.isEmpty()}">
+                    <p>No enquiries found.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+</body>
+
+</html>

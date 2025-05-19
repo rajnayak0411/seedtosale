@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+    <div th:replace="fragments/adminnav :: adminnav"></div>
+    <div class="container-fluid">
+        <div class="row">
+
+            <!-- Sidebar -->
+            <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+
+            <!-- Main Content -->
+            <main class="col-md-10 col-lg-10 p-3">
+                <h4>Dashboard</h4>
+
+                <div class="row mb-4">
+                    <!-- Seeds Sold Card -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Seeds Sold</h5>
+                                <p class="card-text display-6" th:text="${totalSeedsSoldKg} + ' kgs'">0 kgs</p>
+                                <h6>Seeds Sold:</h6>
+                                <ul>
+                                    <li th:each="seed : ${seedsSoldKgList}"
+                                        th:text="${seed.name + ' - ' + seed.soldWeightKg + ' kgs'}">Seed Name - Weight
+                                        in Kgs</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tractors Rented Card -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Tractors Rented</h5>
+                                <p class="card-text display-6" th:text="${totalTractorsRented}">0</p>
+                                <h6>Tractors Rented: <span th:text="${totalTractorsRented}">0</span></h6>
+                                <ul>
+                                    <li th:each="tractor : ${rentedTractorsList}"
+                                        th:text="${tractor.name + ' - ' + tractor.rentedQuantity}">Tractor Name -
+                                        Quantity</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <!-- Seeds Left Card -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Seeds Left in Stock (Kg)</h5>
+                                <ul>
+                                    <li th:each="seed : ${seedsLeftKgList}"
+                                        th:text="${seed.name + ' - ' + seed.weightLeftKg + ' kgs'}">Seed Name - Weight
+                                        in Kg</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tractors Left Card -->
+                    <div class="col-md-6 mb-3">
+                        <div class="card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Tractors Left in Stock</h5>
+                                <ul>
+                                    <li th:each="tractor : ${tractorsLeftList}"
+                                        th:text="${tractor.name + ' - ' + tractor.tractorLeft}">Tractor Name -
+                                        Quantity</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+</body>
+
+</html>

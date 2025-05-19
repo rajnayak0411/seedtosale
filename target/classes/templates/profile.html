@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>User Profile - Seed to Sale</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-top: 56px;
+            /* height of navbar */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar {
+            height: calc(100vh - 56px);
+            background-color: #6f42c1;
+            color: white;
+            padding-top: 20px;
+            position: fixed;
+            top: 56px;
+            width: 220px;
+            overflow-y: auto;
+        }
+
+        .sidebar a {
+            color: white;
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .sidebar a.active,
+        .sidebar a:hover {
+            background-color: #5a32a3;
+            text-decoration: none;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            flex-grow: 1;
+            min-height: calc(100vh - 56px);
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 1rem;
+            transition: box-shadow 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid #6f42c1;
+        }
+
+        .card-title {
+            font-weight: 600;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #495057;
+        }
+
+        .info-value {
+            color: #6c757d;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border-color: #28a745;
+        }
+
+        .btn-outline-success {
+            border-color: #28a745;
+            color: #28a745;
+        }
+
+        .btn-outline-success:hover {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .profile {
+            margin-top: 6%;
+        }
+    </style>
+</head>
+
+<body class="bg-light">
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <div class="d-flex">
+        <div class="sidebar">
+            <a href="#" id="profileLink" class="active" onclick="showSection('profileSection')">Profile</a>
+            <a href="#" id="ordersLink" onclick="showSection('ordersSection')">Orders</a>
+        </div>
+
+        <div class="content">
+            <div id="profileSection">
+                <h3>User Profile</h3>
+                <div th:if="${successMessage}" class="alert alert-success" role="alert" th:text="${successMessage}"></div>
+                <div th:if="${errorMessage}" class="alert alert-danger" role="alert" th:text="${errorMessage}"></div>
+                <form th:action="@{/user-profile}" th:object="${buyer}" method="post">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" th:field="*{name}" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" th:field="*{phone}" class="form-control" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea th:field="*{address}" class="form-control" id="address" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Update Profile</button>
+                </form>
+            </div>
+
+            <div id="ordersSection" style="display:none;">
+                <h3>Order Details</h3>
+                <div th:if="${orderDetails != null and !orderDetails.isEmpty()}">
+                    <div class="row">
+                        <div class="col-md-6" th:each="orderMap : ${orderDetails}">
+                            <div class="card p-3">
+                                <div class="row align-items-center">
+                                    <div class="col-8">
+                                        <h5 class="card-title"
+                                            th:text="${orderMap.order.itemType} + ' - ' + ${orderMap.productName}">Item Type -
+                                            Product Name</h5>
+                                        <p><strong>Status:</strong> <span >Payment Successful</span></p>
+                                        <p><strong>Quantity:</strong> <span th:text="${orderMap.order.quantity}">1</span></p>
+                                        <p><strong>Total Price:</strong> ₹<span
+                                            th:text="${orderMap.order.totalPrice}">1000</span></p>
+                                        <p><strong>Order Date:</strong>
+                                            <span th:text="${#temporals.format(orderMap.order.createdAt, 'dd MMM yyyy')}">01 Jan
+                                                2023</span>
+                                        </p>
+                                        <p><strong>Delivery Date:</strong> <span
+                                            th:text="${orderMap.deliveryDate != null ? #temporals.format(orderMap.deliveryDate, 'dd MMM yyyy') : 'N/A'}"></span>
+                                        </p>
+                                    </div>
+                                    <div class="col-4">
+                                        <img th:src="@{${orderMap.productImage}}" alt="Product Image" class="img-fluid" style="max-height: 150px; object-fit: contain;">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div th:if="${orderDetails == null or orderDetails.isEmpty()}">
+                    <p>No orders found.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <nav th:replace="fragments/footer :: footer"></nav>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showSection(sectionId) {
+            document.getElementById('profileSection').style.display = 'none';
+            document.getElementById('ordersSection').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+
+            document.getElementById('profileLink').classList.remove('active');
+            document.getElementById('ordersLink').classList.remove('active');
+            if (sectionId === 'profileSection') {
+                document.getElementById('profileLink').classList.add('active');
+            } else {
+                document.getElementById('ordersLink').classList.add('active');
+            }
+        }
+    </script>
+</body>
+
+</html>

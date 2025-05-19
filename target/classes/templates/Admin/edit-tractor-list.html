@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+<body>
+    <div th:replace="fragments/adminnav :: adminnav"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+            <main class="col-lg-10">
+                <div class="container mt-3">
+                    <h4 class="mb-2">Edit Tractors</h3>
+                    <div th:if="${message}" class="alert alert-info" role="alert" th:text="${message}"></div>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Sr.</th>
+                                <th>Tractor Name</th>
+                                <th>Location</th>
+                                <th>Price</th>
+                                <th>Description</th>
+                                <th>Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="tractor, iterStat : ${tractors}">
+                                <td th:text="${iterStat.count}">1</td>
+                                <td th:text="${tractor.name}">Tractor Name</td>
+                                <td th:text="${tractor.location}">Location</td>
+                                <td>₹<span th:text="${tractor.price}">Price</span></td>
+                                <td th:text="${tractor.description}">Description</td>
+                                <td>
+                                    <img th:src="@{'/uploads/tractors/' + ${tractor.image}}" alt="Tractor Image" style="width:100px; height:80px; object-fit:cover; border-radius:5px;" />
+                                </td>
+                                <td>
+                                    <div class="d-flex">
+                                    <a th:href="@{'/admin/edit-tractor/' + ${tractor.id}}" class="btn btn-primary btn-sm">Edit</a>
+                                    <a th:href="@{'/admin/delete-tractor/' + ${tractor.id}}" class="btn btn-primary btn-sm ms-2">Delete</a>
+                                </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+    </div>
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+</body>
+</html>
