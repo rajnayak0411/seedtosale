@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SeedToSale - Connecting Farmers & Buyers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            padding-top: 50px;
+        }
+
+        html {
+            scroll-padding-top: 70px;
+        }
+
+        #services {
+            scroll-margin-top: -45px;
+            /* Adjusting this value to match About and Contact sections */
+        }
+
+        .hero-section {
+            background: url('/img/haryana-farmers.webp') no-repeat center/cover;
+            height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgb(44, 67, 111);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .hero-section .intro {
+            text-align: left;
+            width: 60%;
+            font-weight: 600;
+            background-color: rgba(42, 78, 22, 0.7);
+            padding: 20px;
+            border-radius: 25px;
+            color: white;
+        }
+
+        .buy-btn {
+            background-color: rgba(247, 241, 139, 0.954);
+            font-size: 20px;
+            color: rgb(44, 67, 111);
+            padding: 10px 35px;
+            border-radius: 25px;
+            font-weight: 700;
+            display: inline-block;
+            margin-top: 15px;
+            transition: 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .buy-btn:hover {
+            background-color: rgb(44, 67, 111);
+            color: white;
+            box-shadow: 0 6px 12px rgba(44, 67, 111, 0.6);
+            transform: translateY(-3px);
+        }
+
+        .crops-section,
+        .services-section {
+            padding: 50px 0;
+            text-align: center;
+        }
+
+        .crop-card,
+        .service-card {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .crop-card:hover,
+        .service-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        .crop-card img,
+        .service-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .service-card img {
+            border-radius: 50%;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 15px;
+        }
+
+        .carousel-item img {
+            width: 550px;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 25px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .carousel-item img:hover {
+            transform: scale(1.05);
+        }
+
+        .slide {
+            background-color: white(218, 218, 218, 0.897);
+        }
+
+        #carouselExample button span {
+            color: black !important;
+            background-color: black;
+            height: 80px;
+            margin-top: -80px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section {
+                height: auto;
+                padding: 40px 20px;
+                display: block;
+            }
+
+            .hero-section .intro {
+                width: 100%;
+                text-align: center;
+                padding: 15px;
+            }
+
+            .intro .mb-intro {
+                display: block !important;
+            }
+
+            .intro .dt-intro {
+                display: none !important;
+            }
+
+            .buy-btn {
+                font-size: 18px;
+                padding: 12px 30px;
+                border-radius: 30px;
+                margin-top: 20px;
+            }
+
+            .crops-section,
+            .services-section {
+                padding: 30px 15px;
+            }
+
+            .crop-card,
+            .service-card {
+                margin-bottom: 20px;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            }
+
+            .crop-card img,
+            .service-card img {
+                height: 150px;
+            }
+
+            .carousel-item img {
+                width: 320px;
+                height: 330px !important;
+                height: auto;
+            }
+
+            #carouselExample button {
+                height: 40px;
+                width: 40px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+
+            #carouselExample .carousel-control-prev {
+                left: 5px;
+            }
+
+            #carouselExample .carousel-control-next {
+                right: 5px;
+            }
+
+            #carouselExample button span {
+                height: 40px;
+                width: 40px;
+                margin-top: -40px;
+            }
+
+            .container {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            h1, h2, h3, h4, h5 {
+                font-weight: 600;
+            }
+
+            p {
+                font-size: 16px;
+                line-height: 1.5;
+            }
+        }
+
+        .vbar {
+            border: solid 1px black;
+            height: 25px;
+            margin-left: -6px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+    <div class="hero-section">
+        <div class="intro">
+            <h1>From Seed to Sale</h1>
+            <h4 class="dt-intro">Welcome to SeedToSale, your go-to platform for buying and selling crops. We connect
+                farmers and buyers, ensuring fresh produce reaches the market efficiently. Join us today and grow your
+                agricultural business!</h4>
+            <h4 class="mb-intro" style="display: none;">Welcome to SeedToSale.</h4>
+            <a class="btn btn-success buy-btn" href="/seeds">Buy Now</a>
+        </div>
+    </div>
+
+    <div class="container crops-section borde bs5-card-bprder">
+        <h2 class="mb-4 bg-dark py-1 text-white">Crops for Sale</h2>
+        <div class="row" th:if="${latestSeeds != null}">
+            <div class="col-md-4" th:each="seed : ${latestSeeds}">
+                <div class="card crop-card">
+                    <img th:src="@{/order/image(itemType='seed', itemId=${seed.id})}" th:alt="${seed.name}" />
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${seed.name}">Seed Name</h5>
+                        <p class="card-text" th:text="'Price: ₹' + ${seed.price}">Price</p>
+                        <a th:href="@{/order/buy-seed/{id}(id=${seed.id})}" class="btn btn-success">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container crops-section borde bs5-card-bprder">
+        <h2 class="mb-4 bg-dark py-1 text-white">Tractors for Rent</h2>
+        <div class="row" th:if="${latestTractors != null}">
+            <div class="col-md-4" th:each="tractor : ${latestTractors}">
+                <div class="card crop-card">
+                    <img th:src="@{/order/image(itemType='tractor', itemId=${tractor.id})}" th:alt="${tractor.name}" />
+                    <div class="card-body">
+                        <h5 class="card-title" th:text="${tractor.name}">Tractor Name</h5>
+                        <p class="card-text" th:text="'Price: ₹' + ${tractor.price}">Price</p>
+                        <a th:href="@{/order/rent-tractor/{id}(id=${tractor.id})}" class="btn btn-success">Buy Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container services-section" id="services">
+        <h2 class="mb-4 bg-dark py-1 text-white">Our Services</h2>
+        <div class="row text-center">
+            <div class="col-md-4">
+                <div class="card service-card p-4">
+                    <div class="d-flex justify-content-center">
+                        <img src="/img/Wheat.jpg" alt="Crop Listing">
+                    </div>
+                    <h5>Crop Listing and Promotion</h5>
+                    <p>We provide a platform for sellers to easily list their crops, ensuring maximum visibility and broad outreach to potential buyers.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card service-card p-4">
+                    <div class="d-flex justify-content-center">
+                        <img src="/img/comm.jpg" alt="Communication">
+                    </div>
+                    <h5>Buyer-Seller Communication</h5>
+                    <p>Our website features a built-in messaging system to facilitate direct communication between
+                        buyers and sellers.</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card service-card p-4">
+                    <div class="d-flex justify-content-center">
+                        <img src="/img/cs.jpg" alt="Support">
+                    </div>
+                    <h5>Customer Support Services</h5>
+                    <p>Our dedicated customer support team is always available to assist with any inquiries or issues
+                        that may arise during your experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="mb-4 bg-dark py-1 text-center text-white">Gallery</h2>
+        <div id="carouselExample" class="carousel slide py-3" data-bs-ride="carousel" data-bs-interval="2000">
+            <div class="carousel-inner ">
+                <div class="carousel-item active">
+                    <img src="/img/wheat.jpg" class="d-block " alt="Wheat">
+                    <h5 class="mt-4 text-center">1/3</h5>
+                </div>
+                <div class="carousel-item">
+                    <img src="/img/rice.jpg" class="d-block" alt="Rice">
+                    <h5 class="mt-4 text-center">2/3</h5>
+                </div>
+                <div class="carousel-item">
+                    <img src="/img/corn.jpg" class="d-block " alt="Corn">
+                    <h5 class="mt-4 text-center">3/3</h5>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+
+    <!-- About Section -->
+    <div class="container mt-5">
+        <h2 class="mb-4 bg-dark py-1 text-center text-white" id="about">About Us</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <img src="/img/haryana-farmers.webp" class="img-fluid rounded" alt="Our Farm">
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-success">Our Story</h3>
+                <p>SeedToSale was founded in 2025 with a mission to connect farmers directly with buyers, eliminating
+                    middlemen and ensuring fair prices for both parties.</p>
+                <h3 class="text-success mt-4">Our Mission</h3>
+                <p>To revolutionize agricultural commerce by providing a transparent, efficient platform that benefits
+                    both farmers and consumers.</p>
+                <h3 class="text-success mt-4">Our Team</h3>
+                <p>We're a group of agriculture enthusiasts and tech experts committed to making farming more profitable
+                    and sustainable.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Us Section -->
+    <div class="container mt-5">
+        <h2 class="mb-4 bg-dark py-1 text-center text-white" id="contact">Contact Us</h2>
+        <div class="row px-2">
+            <div class="col-md-6">
+                <h3 class="text-success">Get In Touch</h3>
+                <div class="px-4 pt-2">
+                    <p><i class="fas fa-map-marker-alt text-success me-2"></i>Polytechinc College Damoh(M.P.) 470661</p>
+                    <p><i class="fas fa-phone text-success me-2"></i>+91 6262751662</p>
+                    <p><i class="fas fa-envelope text-success me-2"></i>contact@seedtosale.com</p>
+                </div>
+                <h3 class="text-success mt-4 px-2">Business Hours</h3>
+                <div class="px-4 pt-2">
+                    <p><i class="fas fa-calendar-day text-success me-2"></i>Monday - Friday: 9:00 AM - 6:00 PM</p>
+                    <p><i class="fas fa-calendar-day text-success me-2"></i>Saturday: 10:00 AM - 4:00 PM</p>
+                    <p><i class="fas fa-door-closed text-success me-2"></i>Sunday: Closed</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h3 class="text-success">Send Us a Message</h3>
+                <form th:action="@{/contact}" th:object="${enquiry}" method="post">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Your Name" th:field="*{name}" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" placeholder="Your Email" th:field="*{email}" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="text" class="form-control" placeholder="Subject" th:field="*{subject}" required>
+                    </div>
+                    <div class="mb-3">
+                        <textarea class="form-control" rows="3" placeholder="Your Message" th:field="*{message}" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <h2 class="mb-4 bg-dark py-1 text-center text-white">Customer Reviews</h2>
+        </h2>
+        <div id="reviewsCarousel" class="carousel slide card bg-success" data-bs-ride="carousel">
+            <div class="carousel-inner text-center">
+                <div class="carousel-item active my-5">
+                    <p class="lead">"Great platform! Helped me sell my crops easily."</p>
+                    <h5>- Rajesh Kumar</h5>
+                </div>
+                <div class="carousel-item my-5">
+                    <p class="lead">"Best marketplace for fresh produce. Highly recommend!"</p>
+                    <h5>- Priya Sharma</h5>
+                </div>
+                <div class="carousel-item my-5">
+                    <p class="lead">"Smooth transactions and great customer support."</p>
+                    <h5>- Aman Verma</h5>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#reviewsCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

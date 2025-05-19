@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mahindra Tractor List - CropSell</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        body {
+            background: #f4f9f4;
+            font-family: 'Segoe UI', sans-serif;
+            padding-top: 30px;
+        }
+
+        .tractor-card {
+            background: #fff;
+            border: 1px solid #dcedc8;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            position: relative;
+        }
+
+        .filter-sidebar {
+            width: 25%;
+            position: sticky;
+            top: 100px;
+            height: fit-content;
+        }
+
+        .tractor-card img {
+            width: 250px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-right: 15px;
+            flex-shrink: 0;
+            max-width: none;
+            max-height: none;
+        }
+
+        .tractor-card p {
+            width: 65%;
+            margin: auto 2px;
+            font-size: 16px;
+        }
+
+        .filter-bar {
+            background: #e8f5e9;
+            padding: 15px;
+            border-radius: 10px;
+        }
+
+        .tractor-content {
+            width: 70%;
+        }
+
+        .filter-bar select,
+        .filter-bar input {
+            max-width: 100%;
+        }
+
+        h2 {
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .row.flex-container {
+            display: flex;
+            flex-wrap: nowrap;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+
+            .filter-sidebar,
+            .tractor-content {
+                width: 100%;
+            }
+
+            .row.flex-container {
+                flex-direction: column;
+            }
+
+            .tractor-card {
+                flex-direction: column;
+                align-items: flex-start;
+                position: relative;
+            }
+
+            .tractor-card img {
+                width: 100%;
+                height: auto;
+                margin-bottom: 10px;
+            }
+
+            .buybtn {
+                position: absolute;
+                bottom: 120px;
+                width: 20%;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .filter-bar select,
+            .filter-bar input,
+            .filter-bar button {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .vbar {
+                display: none;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+                text-align: center;
+            }
+
+            .form-label {
+                font-size: 0.9rem;
+            }
+
+            .form-control,
+            .form-select {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
+
+            .btn {
+                padding: 8px 16px;
+                font-size: 0.9rem;
+            }
+            
+
+        }
+
+        .buybtn {
+            position: absolute;
+            right: 5%;
+            margin-top: -5%;
+        }
+
+        .vbar {
+            border: solid 1px black;
+            height: 25px;
+            margin-left: -6px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+
+    <div class="container my-5">
+        <div class="row flex-container">
+            <div class="filter-sidebar filter-bar">
+                <form action="#" th:action="@{/tractor}" method="get">
+                    <div class="mb-3">
+                        <label for="locationFilter" class="form-label">Filter by Location:</label>
+<select class="form-select" id="locationFilter" name="location" th:value="${filterLocation}">
+    <option value="" th:selected="${filterLocation == ''}">All</option>
+    <option value="AP" th:selected="${filterLocation == 'AP'}">Andhra Pradesh</option>
+    <option value="AR" th:selected="${filterLocation == 'AR'}">Arunachal Pradesh</option>
+    <option value="AS" th:selected="${filterLocation == 'AS'}">Assam</option>
+    <option value="BR" th:selected="${filterLocation == 'BR'}">Bihar</option>
+    <option value="CT" th:selected="${filterLocation == 'CT'}">Chhattisgarh</option>
+    <option value="GA" th:selected="${filterLocation == 'GA'}">Goa</option>
+    <option value="GJ" th:selected="${filterLocation == 'GJ'}">Gujarat</option>
+    <option value="HR" th:selected="${filterLocation == 'HR'}">Haryana</option>
+    <option value="HP" th:selected="${filterLocation == 'HP'}">Himachal Pradesh</option>
+    <option value="JK" th:selected="${filterLocation == 'JK'}">Jammu and Kashmir</option>
+    <option value="JH" th:selected="${filterLocation == 'JH'}">Jharkhand</option>
+    <option value="KA" th:selected="${filterLocation == 'KA'}">Karnataka</option>
+    <option value="KL" th:selected="${filterLocation == 'KL'}">Kerala</option>
+    <option value="MP" th:selected="${filterLocation == 'MP'}">Madhya Pradesh</option>
+    <option value="MH" th:selected="${filterLocation == 'MH'}">Maharashtra</option>
+    <option value="MN" th:selected="${filterLocation == 'MN'}">Manipur</option>
+    <option value="ML" th:selected="${filterLocation == 'ML'}">Meghalaya</option>
+    <option value="MZ" th:selected="${filterLocation == 'MZ'}">Mizoram</option>
+    <option value="NL" th:selected="${filterLocation == 'NL'}">Nagaland</option>
+    <option value="OR" th:selected="${filterLocation == 'OR'}">Odisha</option>
+    <option value="PB" th:selected="${filterLocation == 'PB'}">Punjab</option>
+    <option value="RJ" th:selected="${filterLocation == 'RJ'}">Rajasthan</option>
+    <option value="SK" th:selected="${filterLocation == 'SK'}">Sikkim</option>
+    <option value="TN" th:selected="${filterLocation == 'TN'}">Tamil Nadu</option>
+    <option value="TG" th:selected="${filterLocation == 'TG'}">Telangana</option>
+    <option value="TR" th:selected="${filterLocation == 'TR'}">Tripura</option>
+    <option value="UT" th:selected="${filterLocation == 'UT'}">Uttarakhand</option>
+    <option value="UP" th:selected="${filterLocation == 'UP'}">Uttar Pradesh</option>
+    <option value="WB" th:selected="${filterLocation == 'WB'}">West Bengal</option>
+    <option value="AN" th:selected="${filterLocation == 'AN'}">Andaman and Nicobar Islands</option>
+    <option value="CH" th:selected="${filterLocation == 'CH'}">Chandigarh</option>
+    <option value="DN" th:selected="${filterLocation == 'DN'}">Dadra and Nagar Haveli and Daman and Diu</option>
+    <option value="DL" th:selected="${filterLocation == 'DL'}">Delhi</option>
+    <option value="LA" th:selected="${filterLocation == 'LA'}">Ladakh</option>
+    <option value="LD" th:selected="${filterLocation == 'LD'}">Lakshadweep</option>
+    <option value="PY" th:selected="${filterLocation == 'PY'}">Puducherry</option>
+</select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="priceFilter" class="form-label">Max Price (₹):</label>
+                        <input type="number" class="form-control" id="priceFilter" name="maxPrice"
+                            placeholder="e.g., 600000" th:value="${filterMaxPrice}" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="searchTractor" class="form-label">Search:</label>
+                        <input type="text" class="form-control" id="searchTractor" name="search"
+                            placeholder="Search tractor name..." th:value="${filterSearch}" />
+                    </div>
+                    <button type="submit" class="btn btn-success">Apply Filters</button>
+                </form>
+            </div>
+
+            <div class="tractor-content">
+                <div id="tractorList">
+                    <div th:each="tractor : ${tractors}" class="tractor-card">
+                        <img th:src="@{'/uploads/tractors/' + ${tractor.image}}" th:alt="${tractor.name}" />
+                        <div>
+                            <h5 th:text="${tractor.name}">Tractor Name</h5>
+                            <p th:text="${tractor.description}">Description</p>
+                            <p><label for="price" class="fw-bold mt-1">Price :</label> ₹<span
+                                    th:text="${tractor.price}"></span>/Hr</p>
+                            <p><label for="location" class="fw-bold">Location :</label> <span
+                                    th:text="${tractor.location}">Location</span></p>
+                        </div>
+                        <form th:action="@{'/order/rent-tractor/' + ${tractor.id}}" method="get" style="display:inline;">
+                            <button type="submit" class="btn btn-primary buybtn">Rent Now</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer th:replace="fragments/footer :: footer"></footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

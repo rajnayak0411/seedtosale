@@ -1,0 +1,45 @@
+<div th:fragment="navbar" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-0">
+        <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <a class="navbar-brand fw-bold" href="/" th:href="@{/}">SeedToSale</a>
+                <a class="btn btn-success ms-2 fs-6 py-0 px-1" href="/seeds" th:href="@{/seeds}">Seeds</a>
+                <a class="btn btn-success ms-2 fs-6 py-0 px-1" href="/tractor" th:href="@{/tractor}">Tractor</a>
+            </div>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" th:classappend="${activePage == 'home'} ? ' fw-bold' : ''" href="/" th:href="@{/}">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#services" th:href="@{/#services}">Services</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#about" th:href="@{/#about}">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#contact" th:href="@{/#contact}">Contact Us</a>
+                    </li>
+                    <li class="nav-item btn btn-success mt-2" sec:authorize="!isAuthenticated()" style="height: 35px !important;margin-left: 2px;padding-top: 1px;">
+                        <a class="nav-link fw-semibold text-white pt-0" th:classappend="${activePage == 'signup'} ? ' fw-bold' : ''" th:href="@{/signup}">Sign Up</a>
+                    </li>
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span sec:authentication="name" hidden class="me-1"></span>
+                            <i class="fa fa-user-circle fa-lg"></i>
+                        </a>
+                        
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
+                            <li><a class="dropdown-item" th:href="@{/user-profile}">Profile</a></li>
+                            <li><a class="dropdown-item" href="/logout" th:href="@{/logout}">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>

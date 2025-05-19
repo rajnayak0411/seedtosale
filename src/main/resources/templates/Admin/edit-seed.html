@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/adminheader :: adminheader"></head>
+
+<body>
+  <div th:replace="fragments/adminnav :: adminnav"></div>
+  <div class="container-fluid">
+    <div class="row">
+
+      <!-- Sidebar with Animation -->
+      <nav th:replace="fragments/adminsidebar :: adminsidebar"></nav>
+
+      <!-- Main Content without Animation -->
+      <div class="col-lg-9">
+        <div class="container mt-3">
+          <h2 class="mb-4">Edit Seed Details</h2>
+          <div class="form-section">
+            <div class="image-preview">
+              <h5>Image Preview</h5>
+              <div id="file-name" class="file-name"></div>
+              <img th:if="${seed.image != null}" th:src="@{'/uploads/seeds/' + ${seed.image}}" alt="Current Image" style="width:350px; height:250px;"/>
+            </div>
+            <div class="w-50">
+              <div th:if="${message}" class="alert alert-info" role="alert" th:text="${message}"></div>
+              <form enctype="multipart/form-data" method="post" th:action="@{'/admin/edit-seed/' + ${seed.id}}">
+                <div class="mb-3">
+                  <input type="text" class="form-control" placeholder="Seed Name" name="name" th:value="${seed.name}" required>
+                </div>
+                <div class="mb-3">
+                    <select class="form-select" th:value="${seed.type}" id="type" name="type" required>
+                      <option value="" disabled selected>Select type</option>
+                      <option value="cereal" th:selected="${seed.type == 'cereal'}">Cereal</option>
+                      <option value="vegetable" th:selected="${seed.type == 'vegetable'}">Vegetable</option>
+                      <option value="fruit" th:selected="${seed.type == 'fruit'}">Fruit</option>
+                      <option value="legume" th:selected="${seed.type == 'legume'}">Legume</option>
+                    </select>
+                  </div>
+                <div class="mb-3">
+                  <select class="form-select" id="location" name="location" required>
+                    <option value="" disabled>Select Location</option>
+                    <option th:each="loc : ${locations}" th:value="${loc}" th:text="${loc}" th:selected="${loc.equals(seed.location)}"></option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Price" name="price" min="0" th:value="${seed.price}" required>
+                </div>
+                <!-- Removed weightInKg input as it does not exist in Seed model -->
+                <div class="mb-3">
+                  <input type="number" class="form-control" placeholder="Stock Quantity" name="stockQuantity" min="0" th:value="${seed.stockQuantity}" required>
+                </div>
+                <div class="mb-3">
+                  <input type="number" hidden class="form-control" placeholder="Sold Quantity" name="soldQuantity" min="0" th:value="${seed.soldQuantity}" required>
+                </div>
+                <div class="mb-3 mx-2 d-flex">
+                  <label for="upload-photo" class="form-label col-lg-4 mt-2">Upload New Photo</label>
+                  <input type="file" id="upload-photo" name="photo" class="form-control" accept="image/*">
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Update Seed</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="fragments/adminfooter :: adminfooter"></div>
+
+    <script>
+      document.getElementById("upload-photo").addEventListener("change", function (event) {
+        const file = event.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            const imagePreviewContainer = document.querySelector(".image-preview");
+            // Remove existing preview image if any
+            const existingImage = imagePreviewContainer.querySelector("img");
+            if (existingImage) {
+              existingImage.remove();
+            }
+            // Create new image element for preview
+            const imagePreview = document.createElement("img");
+            imagePreview.src = e.target.result;
+            imagePreview.style.width = '350px';
+            imagePreview.style.height = '250px';
+            imagePreviewContainer.appendChild(imagePreview);
+          };
+          reader.readAsDataURL(file);
+          document.getElementById("file-name").textContent = file.name;
+        }
+      });
+    </script>
+</body>
+
+</html>

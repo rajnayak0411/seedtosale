@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"></html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <title>Payment - Seed to Sale</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+
+        .payment-container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            position: relative;
+            
+        }
+        .item-photo{
+            position: absolute;
+            right: 30px;
+            height: 140px !important;
+        }
+        .payment-container .btn-success {
+            width: 100%;
+            font-weight: 600;
+        }
+
+        @media (max-width: 576px) {
+            .payment-container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav th:replace="fragments/navbar :: navbar"></nav>
+    <div class="payment-container mt-5">
+        <h2 class="mb-4 text-center">Payment for <span th:text="${itemType}"></span></h2>
+        <div class="card p-4">
+                <div class="details">
+                    <p><strong>Name:</strong> <span th:text="${item.name}"></span></p>
+                    <p><strong>Unit Price:</strong> ₹<span id="unitPrice" th:text="${item.price}"></span></p>
+                    </div>
+                <img th:src="@{/order/image(itemType=${itemType}, itemId=${item.id})}" alt="Product Image"
+                    class="product-image item-photo" />
+            <form id="paymentForm" class="mt-3">
+                <input type="hidden" name="itemType" th:value="${itemType}" />
+                <input type="hidden" name="itemId" th:value="${item.id}" />
+                <div class="mb-3">
+                    <label for="quantity" class="form-label">Quantity (kg)</label>
+                    <input type="number" id="quantity" name="quantity" class="form-control" min="1" th:attr="max=${availableQuantity}" value="1"
+                        required />
+                    <small class="text-muted">Available quantity: <span th:text="${availableQuantity}">0</span> kg</small>
+                </div>
+                <p><strong>Total Price:</strong> ₹<span id="totalPrice"></span></p>
+                <button type="submit" class="btn btn-success">Pay with Razorpay</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        function updateTotalPrice() {
+            var quantity = parseInt(document.getElementById('quantity').value);
+            var unitPrice = parseFloat(document.getElementById('unitPrice').textContent);
+            if (isNaN(quantity) || quantity < 1) {
+                document.getElementById('totalPrice').textContent = '0.00';
+                return;
+            }
+            if (isNaN(unitPrice)) {
+                unitPrice = 0;
+            }
+            var totalPrice = quantity * unitPrice;
+            document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+        }
+        window.onload = function() {
+            updateTotalPrice();
+            document.getElementById('quantity').addEventListener('input', updateTotalPrice);
+
+            document.getElementById('paymentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                initiateRazorpayPayment();
+            });
+        };
+
+        function initiateRazorpayPayment() {
+            var form = document.getElementById('paymentForm');
+            var formData = new FormData(form);
+
+            // First create order and initiate payment in one call
+            fetch('/order/create-and-initiate', {
+                method: 'POST',
+                body: new URLSearchParams(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert('Error: ' + data.error);
+                    return;
+                }
+                var options = {
+                    "key": data.keyId,
+                    "amount": parseInt(document.getElementById('quantity').value) * parseFloat(document.getElementById('unitPrice').textContent) * 100, // amount in paise
+                    "currency": "INR",
+                    "name": "Seed to Sale",
+                    "description": "Purchase",
+                    "order_id": data.razorpayOrderId,
+                    "handler": function (response){
+                        var form = document.createElement('form');
+                        form.method = 'POST';
+                        form.action = '/order/razorpay/confirm';
+
+                        var params = {
+                            orderId: data.orderId,
+                            itemType: data.itemType,
+                            itemId: data.itemId,
+                            quantity: data.quantity,
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature
+                        };
+
+                        for (var key in params) {
+                            if (params.hasOwnProperty(key)) {
+                                var hiddenField = document.createElement('input');
+                                hiddenField.type = 'hidden';
+                                hiddenField.name = key;
+                                hiddenField.value = params[key];
+                                form.appendChild(hiddenField);
+                            }
+                        }
+                        document.body.appendChild(form);
+                        form.submit();
+                    },
+                    "prefill": {
+                        "name": "",
+                        "email": "",
+                        "contact": ""
+                    },
+                    "theme": {
+                        "color": "#3399cc"
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            })
+            .catch(error => {
+                alert('Error initiating payment: ' + error);
+            });
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+</body>
+</html>
+
+</body>
+</html>
